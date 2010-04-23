@@ -17,8 +17,7 @@ Source0:	pluto-%{version}.tar.bz2
 # Source0-md5:	d6355e173ebda88b4a2da4f7df688875
 URL:		http://portals.apache.org/pluto/
 BuildRequires:	ant
-%{?with_java_sun:BuildRequires:	java-sun}
-%{!?with_java_sun:BuildRequires:	java-gcj-compat-devel}
+BuildRequires:	jdk
 Requires:	jpackage-utils
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
