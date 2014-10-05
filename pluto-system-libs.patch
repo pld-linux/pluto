@@ -1,0 +1,177 @@
+--- pluto-0.11.0/configure.ac.orig	2014-05-30 10:28:06.000000000 +0200
++++ pluto-0.11.0/configure.ac	2014-10-05 14:26:45.652660158 +0200
+@@ -112,74 +112,6 @@ if test "$poly_cv_gmpfatal" = "yes"; the
+ 
+ 
+ 
+-dnl Configuring PipLib (long long int is 64 bits)
+-echo ""
+-echo "=========================="
+-echo "Configuring PipLib"
+-echo "=========================="
+-configureopts="--with-gmp \
+---with-gmp-prefix=$GMP_PREFIX \
+---prefix=$prefix"
+-(cd piplib/
+- $RM config.cache;
+- ./configure ${configureopts} ${archopts}
+- )
+-
+-
+-dnl Configuring Openscop
+-echo ""
+-echo "=========================="
+-echo "Configuring Openscop"
+-echo "=========================="
+-configureopts="--with-gmp=system \
+---with-gmp-prefix=$GMP_PREFIX \
+---prefix=$prefix"
+-(cd openscop/
+- ./configure ${configureopts} ${archopts}
+- )
+-
+-
+-dnl Configuring Clan-osl
+-echo ""
+-echo "=========================="
+-echo "Configuring Clan"
+-echo "=========================="
+-configureopts="--prefix=$prefix \
+---with-osl=build \
+---with-osl-builddir=$SOURCE_DIR/openscop"
+-(cd clan/
+- ./configure ${configureopts} ${archopts}
+- )
+-
+-
+-dnl Configuring Candl-osl
+-dnl can't enable the gmp version without modifying 
+-dnl the precision the is used elsewhere in pluto
+-echo ""
+-echo "=========================="
+-echo "Configuring Candl"
+-echo "=========================="
+-configureopts="--enable-llint-version \
+---prefix=$prefix \
+---with-piplib=build \
+---with-piplib-builddir=$SOURCE_DIR/piplib \
+---with-osl=build \
+---with-osl-builddir=$SOURCE_DIR/openscop"
+-(cd candl/
+- ./configure ${configureopts} ${archopts}
+- )
+-
+-
+-dnl Configuring polylib
+-echo ""
+-echo "======================"
+-echo "Configuring polylib"
+-echo "======================"
+-configureopts="--enable-longlongint-lib \
+---prefix=$prefix"
+-(cd polylib/
+- ./configure ${configureopts}
+-)
+ 
+ 
+ AC_SUBST(ISL_INCLUDE)
+@@ -219,32 +151,6 @@ configureopts="--with-gmp=system \
+ fi
+ 
+ 
+-dnl Configuring Cloog 0.14.1 (long long int)
+-echo ""
+-echo "=========================="
+-echo "Configuring Cloog-isl"
+-echo "=========================="
+-if test x$external_isl = xfalse; then
+-configureopts="--with-isl=build \
+---with-isl-builddir=$SOURCE_DIR/isl \
+---with-gmp=system \
+---with-gmp-prefix=$GMP_PREFIX \
+---with-osl=build \
+---with-osl-builddir=$SOURCE_DIR/openscop \
+---prefix=$prefix"
+-else
+-configureopts="--with-isl=system \
+---with-isl-prefix=$isl_prefix \
+---with-gmp=system \
+---with-gmp-prefix=$GMP_PREFIX \
+---with-osl=build \
+---with-osl-builddir=$SOURCE_DIR/openscop \
+---prefix=$prefix"
+-fi
+-(cd cloog-isl/
+- ./configure ${configureopts} ${archopts}
+- )
+-
+ AC_PATH_PROGS(BASH, bash)
+ 
+ AC_CONFIG_FILES([getversion.sh], [chmod +x ./getversion.sh])
+--- pluto-0.11.0/Makefile.am.orig	2014-05-30 10:28:06.000000000 +0200
++++ pluto-0.11.0/Makefile.am	2014-10-05 15:40:59.042473155 +0200
+@@ -18,7 +18,7 @@
+ endif
+ 
+ 
+-SUBDIRS = piplib openscop clan candl polylib $(MAY_ISL) cloog-isl src
++SUBDIRS = src
+ 
+ ACLOCAL_AMFLAGS = -I m4
+ 
+--- pluto-0.11.0/src/Makefile.am.orig	2014-05-30 10:28:07.000000000 +0200
++++ pluto-0.11.0/src/Makefile.am	2014-10-05 15:51:12.572447520 +0200
+@@ -19,25 +19,12 @@
+ 
+ pluto_SOURCES = constraints.c constraints_polylib.c constraints_isl.c math_support.c ddg.c transforms.c pluto.c post_transform.c framework.c pluto_codegen_if.c polyloop.c ast_transform.c main.c constraints.h math_support.h pluto.h program.c program.h tile.c unit_tests.c
+ pluto_CPPFLAGS = -O3 -funroll-loops -fopenmp \
+-   -DSCOPLIB_INT_T_IS_LONGLONG -DCLOOG_INT_GMP \
+-   -I../include \
+-   -I../piplib/include \
+-   -I../clan/include \
+-   $(ISL_INCLUDE) \
+-   -I../cloog-isl/include \
+-   -I../openscop/include \
+-   -I../candl/include \
+-   -I../polylib/include
++   -DSCOPLIB_INT_T_IS_MP -DCLOOG_INT_GMP \
++   -I../include
+ 
+-pluto_LDFLAGS = -static -fopenmp
++pluto_LDFLAGS = -fopenmp
+ pluto_LDADD =  \
+-   ../piplib/libpiplib64.la \
+-   ../openscop/libosl.la \
+-   ../clan/libclan.la \
+-   ../cloog-isl/libcloog-isl.la \
+-   $(ISL_LIBADD) \
+-   ../polylib/libpolylib64.la \
+-   ../candl/libcandl.la \
++   -lpiplibMP -losl -lclan -lcloog-isl -lisl -lpolylibgmp -lcandl \
+    -lm
+ 
+ lib_LTLIBRARIES = libpluto.la
+@@ -45,20 +32,10 @@
+ # libpluto doesn't use polylib-based functions
+ libpluto_la_SOURCES = constraints.c constraints_isl.c math_support.c ddg.c transforms.c pluto.c post_transform.c framework.c polyloop.c libpluto.c constraints.h math_support.h pluto.h program.c program.h tile.c
+ libpluto_la_CPPFLAGS = -O3 -funroll-loops -fopenmp \
+-   -DSCOPLIB_INT_T_IS_LONGLONG -DCLOOG_INT_GMP \
+-   -I../include \
+-   -I../piplib/include \
+-   -I../clan/include \
+-   -I../openscop/include \
+-   -I../candl/include \
+-   -I../cloog-isl/include \
+-   $(ISL_INCLUDE)
++   -DSCOPLIB_INT_T_IS_MP -DCLOOG_INT_GMP \
++   -I../include
+ 
+ # libpluto doesn't use polylib
+ libpluto_la_LIBADD = \
+-   ../piplib/libpiplib64.la \
+-   ../openscop/libosl.la \
+-   ../clan/libclan.la \
+-   ../candl/libcandl.la \
+-   $(ISL_LIBADD) \
++   -lpiplibMP -losl -lclan -lcandl -lisl \
+    -lm -lgomp

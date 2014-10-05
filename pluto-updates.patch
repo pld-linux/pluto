@@ -1,0 +1,100 @@
+--- pluto-0.11.0/src/constraints_isl.c.orig	2014-05-30 10:28:07.000000000 +0200
++++ pluto-0.11.0/src/constraints_isl.c	2014-10-05 18:36:32.182031269 +0200
+@@ -14,6 +14,9 @@
+ #include "constraints.h"
+ #include "pluto.h"
+ 
++#include "isl/deprecated/constraint_int.h"
++#include "isl/deprecated/mat_int.h"
++#include "isl/deprecated/point_int.h"
+ #include "isl/map.h"
+ #include "isl/set.h"
+ 
+--- pluto-0.11.0/src/framework.c.orig	2014-05-30 10:28:07.000000000 +0200
++++ pluto-0.11.0/src/framework.c	2014-10-05 18:37:10.948696367 +0200
+@@ -32,6 +32,8 @@
+ #include <isl/constraint.h>
+ #include <isl/mat.h>
+ #include <isl/set.h>
++#include <isl/deprecated/int.h>
++#include <isl/deprecated/mat_int.h>
+ #include "candl/candl.h"
+ 
+ static void eliminate_farkas_multipliers(PlutoConstraints *farkas_cst, int num_elim);
+--- pluto-0.11.0/src/polyloop.c.orig	2014-05-30 10:28:07.000000000 +0200
++++ pluto-0.11.0/src/polyloop.c	2014-10-05 18:37:26.448695622 +0200
+@@ -23,6 +23,7 @@
+  *
+  */
+ #include <assert.h>
++#include <string.h>
+ 
+ #include "pluto.h"
+ #include "program.h"
+--- pluto-0.11.0/src/program.c.orig	2014-05-30 10:28:07.000000000 +0200
++++ pluto-0.11.0/src/program.c	2014-10-05 18:40:07.968688856 +0200
+@@ -57,6 +57,8 @@
+ #include <isl/set.h>
+ #include <isl/flow.h>
+ #include <isl/union_map.h>
++#include <isl/deprecated/int.h>
++#include <isl/deprecated/mat_int.h>
+ 
+ void pluto_add_dep(PlutoProg *prog, Dep *dep)
+ {
+@@ -477,8 +479,8 @@ void pluto_populate_scop (osl_scop_p sco
+     {
+       int niter = stm->domain->nb_columns - scop->context->nb_columns;
+       int nb_orig_it = -1;
+-      if(stm->body){
+-        osl_body_p stmt_body = (osl_body_p)(stm->body->data);
++      osl_body_p stmt_body = osl_statement_get_body(stm);
++      if(stmt_body){
+         nb_orig_it = osl_strings_size(stmt_body->iterators);
+         if (nb_orig_it != niter)
+           {//update iterators.
+@@ -1134,7 +1136,7 @@ static Stmt **osl_to_pluto_stmts(const o
+         /* Tile it if it's tilable unless turned off by .fst/.precut file */
+         stmt->tile = 1;
+ 
+-        osl_body_p stmt_body = (osl_body_p)(scop_stmt->body->data);
++        osl_body_p stmt_body = osl_statement_get_body(scop_stmt);
+ 
+         for (j=0; j<stmt->dim; j++)    {
+             stmt->iterators[j] = strdup(stmt_body->iterators->string[j]);
+@@ -1876,7 +1878,7 @@ static void compute_deps(osl_scop_p scop
+               dim = set_names(dim, isl_dim_param, scop_params->string);
+             }
+             if(niter){
+-              osl_body_p stmt_body = (osl_body_p)(stmt->body->data);
++              osl_body_p stmt_body = osl_statement_get_body(stmt);
+               dim = set_names(dim, isl_dim_set, stmt_body->iterators->string);
+             }
+             dim = isl_dim_set_tuple_name(dim, isl_dim_set, name);
+@@ -1890,7 +1892,7 @@ static void compute_deps(osl_scop_p scop
+               dim = set_names(dim, isl_dim_param, scop_params->string);
+             }
+             if(niter){
+-              osl_body_p stmt_body = (osl_body_p)(stmt->body->data);
++              osl_body_p stmt_body = osl_statement_get_body(stmt);
+               dim = set_names(dim, isl_dim_in, stmt_body->iterators->string);
+             }
+             dim = isl_dim_set_tuple_name(dim, isl_dim_in, name);
+@@ -1954,7 +1956,7 @@ static void compute_deps(osl_scop_p scop
+                   names->parameters = osl_strings_clone(scop_params);
+                 }
+                 if(niter){
+-                  osl_body_p stmt_body = (osl_body_p)(stmt->body->data);
++                  osl_body_p stmt_body = osl_statement_get_body(stmt);
+                   dim = set_names(dim, isl_dim_set, stmt_body->iterators->string);
+ 
+                   osl_strings_free(names->iterators);
+@@ -1971,7 +1973,7 @@ static void compute_deps(osl_scop_p scop
+                   dim = set_names(dim, isl_dim_param, scop_params->string);
+                 }
+                 if(niter){
+-                  osl_body_p stmt_body = (osl_body_p)(stmt->body->data);
++                  osl_body_p stmt_body = osl_statement_get_body(stmt);
+                   dim = set_names(dim, isl_dim_in, stmt_body->iterators->string);
+                 }
+                 dim = isl_dim_set_tuple_name(dim, isl_dim_in, name);
