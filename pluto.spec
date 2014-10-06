@@ -9,6 +9,7 @@ Source0:	http://downloads.sourceforge.net/pluto-compiler/%{name}-%{version}.tar.
 # Source0-md5:	c391e6d4cf49712ef638662c9193c707
 Patch0:		%{name}-system-libs.patch
 Patch1:		%{name}-updates.patch
+Patch2:		%{name}-include.patch
 URL:		http://pluto-compiler.sourceforge.net/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -74,6 +75,7 @@ Statyczna biblioteka Pluto.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 %{__libtoolize}

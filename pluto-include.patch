@@ -1,0 +1,13 @@
+--- pluto-0.11.0/include/pluto/libpluto.h.orig	2014-05-30 10:28:06.000000000 +0200
++++ pluto-0.11.0/include/pluto/libpluto.h	2014-10-06 16:13:49.032098067 +0200
+@@ -1,7 +1,8 @@
+ #ifndef __LIBPLUTO__
+ #define __LIBPLUTO__
+-#include "isl/union_set.h"
+-#include "isl/union_map.h"
++#include <isl/union_set.h>
++#include <isl/union_map.h>
++#include <osl/scop.h>
+ 
+ #if defined(__cplusplus)
+ extern "C" {
