@@ -1,31 +1,32 @@
 Summary:	PLUTO automatic parallelizer
 Summary(pl.UTF-8):	PLUTO - automatyczny zrównoleglacz
 Name:		pluto
-Version:	0.11.0
-Release:	2
+Version:	0.11.4
+Release:	1
 License:	LGPL v2.1+ (library), GPL v3+ (tools)
 Group:		Libraries
 Source0:	http://downloads.sourceforge.net/pluto-compiler/%{name}-%{version}.tar.gz
-# Source0-md5:	c391e6d4cf49712ef638662c9193c707
+# Source0-md5:	2ad2e3305ea480b1c2aefd2cc90f38a1
 Patch0:		%{name}-system-libs.patch
 Patch1:		%{name}-updates.patch
 Patch2:		%{name}-include.patch
+Patch3:		%{name}-link.patch
 URL:		http://pluto-compiler.sourceforge.net/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	candl-devel >= 0.6.2-1.20120728
-BuildRequires:	clan-devel >= 0.7.1
+BuildRequires:	clan-devel >= 0.8.0
 BuildRequires:	gcc >= 6:4.2
 BuildRequires:	isl-devel >= 0.13
 BuildRequires:	libgomp-devel
 BuildRequires:	libtool
-BuildRequires:	osl-devel >= 0.8.4
+BuildRequires:	osl-devel >= 0.9.0
 BuildRequires:	piplib-devel >= 1.4.0
 BuildRequires:	polylib-devel >= 5.22.5
 Requires:	candl >= 0.6.2-1.20120728
-Requires:	clan >= 0.7.1
+Requires:	clan >= 0.8.0
 Requires:	isl >= 0.13
-Requires:	osl >= 0.8.4
+Requires:	osl >= 0.9.0
 Requires:	piplib >= 1.4.0
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -47,10 +48,10 @@ Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki Pluto
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	candl-devel >= 0.6.2-1.20120728
-Requires:	clan-devel >= 0.7.1
+Requires:	clan-devel >= 0.8.0
 Requires:	isl-devel >= 0.13
 Requires:	libgomp-devel
-Requires:	osl-devel >= 0.8.4
+Requires:	osl-devel >= 0.9.0
 Requires:	piplib-devel >= 1.4.0
 
 %description devel
@@ -76,6 +77,7 @@ Statyczna biblioteka Pluto.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 %{__libtoolize}

@@ -1,0 +1,18 @@
+--- pluto-0.11.4/src/Makefile.am.orig	2015-12-03 18:18:37.103391073 +0100
++++ pluto-0.11.4/src/Makefile.am	2015-12-03 20:47:35.216349310 +0100
+@@ -44,7 +44,8 @@
+ lib_LTLIBRARIES = libpluto.la
+ 
+ # libpluto doesn't use polylib-based functions
+-libpluto_la_SOURCES = constraints.c constraints_isl.c math_support.c ddg.c transforms.c pluto.c post_transform.c framework.c polyloop.c iss.c libpluto.c libpluto_dummy.c constraints.h math_support.h pluto.h program.c program.h tile.c
++# - not true, uses pluto_contstraints_(intersect|subtract)
++libpluto_la_SOURCES = constraints.c constraints_polylib.c constraints_isl.c math_support.c ddg.c transforms.c pluto.c post_transform.c framework.c polyloop.c iss.c libpluto.c  constraints.h math_support.h pluto.h program.c program.h tile.c
+ libpluto_la_CPPFLAGS = $(OPT_FLAGS) $(DEBUG_FLAGS) \
+    -DLIB_PLUTO -DSCOPLIB_INT_T_IS_MP -DCLOOG_INT_GMP \
+    -I../include
+@@ -56,4 +57,5 @@
+    -lclan \
+    -lcandl \
+    -lisl \
++   -lpolylibgmp \
+    -lm -lgomp
