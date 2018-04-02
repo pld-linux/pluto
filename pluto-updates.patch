@@ -310,3 +310,109 @@
  
                  schedule_i = osl_scattering_to_isl_map(stmt->scattering, dim);
  
+--- pluto-0.11.4/src/math_support.c.orig	2015-10-28 16:24:59.000000000 +0100
++++ pluto-0.11.4/src/math_support.c	2018-04-02 09:57:55.132084856 +0200
+@@ -30,7 +30,6 @@
+ 
+ #include "isl/val.h"
+ #include "isl/val_gmp.h"
+-#include "isl/deprecated/int.h"
+ 
+ /*
+  * Allocated; not initialized
+--- pluto-0.11.4/src/program.c.orig	2018-04-02 09:31:52.542102698 +0200
++++ pluto-0.11.4/src/program.c	2018-04-02 10:59:32.638709304 +0200
+@@ -58,8 +58,7 @@
+ #include <isl/set.h>
+ #include <isl/flow.h>
+ #include <isl/union_map.h>
+-#include <isl/deprecated/int.h>
+-#include <isl/deprecated/mat_int.h>
++#include <isl/val.h>
+ 
+ osl_relation_p get_identity_schedule(int dim, int npar);
+ static int read_codegen_context_from_file(PlutoConstraints *codegen_context);
+@@ -1556,26 +1555,23 @@
+ {
+     int i, j;
+     int n_col, n_row;
+-    isl_int v;
+     isl_mat *eq;
+ 
+     n_col = relation->nb_columns;
+     n_row = relation->nb_rows;
+ 
+-    isl_int_init(v);
+     eq = isl_mat_alloc(ctx, n_row, n_col - 1);
+ 
+     for (i = 0; i < n_row; ++i) {
+         for (j = 0; j < n_col - 1; ++j) {
+             int row = osl_relation_get_row_id_for_nth_dimension(relation, i+1);
+             int t = osl_int_get_si(relation->precision, relation->m[row][1 + j]);
+-            isl_int_set_si(v, t);
+-            eq = isl_mat_set_element(eq, i, j, v);
++            isl_val *v = isl_val_int_from_si(ctx, t);
++            eq = isl_mat_set_element_val(eq, i, j, v);
++            isl_val_free(v);
+         }
+     }
+ 
+-    isl_int_clear(v);
+-
+     return eq;
+ }
+ 
+@@ -1589,36 +1585,34 @@
+ {
+     int i, j;
+     int n_col, n_row;
+-    isl_int v;
+     isl_mat *eq;
+ 
+     n_row = relation->nb_rows==1?1:relation->nb_rows-1;
+     n_col = relation->nb_columns - (relation->nb_rows==1?1:2);
+ 
+-    isl_int_init(v);
+     eq = isl_mat_alloc(ctx, n_row, n_col);
+ 
+     if(relation->nb_rows==1){
+-        isl_int_set_si(v, -1);
+-        eq = isl_mat_set_element(eq, 0, 0, v);
++        isl_val *v = isl_val_int_from_si(ctx, -1);
++        eq = isl_mat_set_element_val(eq, 0, 0, v);
++        isl_val_set_si(v, 0);
+         for (j = 1; j < n_col; ++j) {
+-            isl_int_set_si(v, 0);
+-            eq = isl_mat_set_element(eq, 0, j, v);
++            eq = isl_mat_set_element_val(eq, 0, j, v);
+         }
++	isl_val_free(v);
+     }
+     else{
+         for (i = 1; i < relation->nb_rows; ++i) {
+             for (j = 2; j < relation->nb_columns; ++j) {
+                 int row = osl_relation_get_row_id_for_nth_dimension(relation, i+1);
+                 int t = osl_int_get_si(relation->precision, relation->m[row][j]);
+-                isl_int_set_si(v, t);
+-                eq = isl_mat_set_element(eq, i-1, j-2, v);
++                isl_val *v = isl_val_int_from_si(ctx, t);
++                eq = isl_mat_set_element_val(eq, i-1, j-2, v);
++		isl_val_free(v);
+             }
+         }
+     }
+ 
+-    isl_int_clear(v);
+-
+     return eq;
+ }
+ 
+@@ -3389,7 +3383,7 @@
+     // IF_DEBUG2(printf("New access function is \n"));
+     // IF_DEBUG2(pluto_matrix_print(stdout, newacc));
+ 
+-    assert(newacc->ncols = stmt->trans->nrows+npar+1);
++    assert(newacc->ncols == stmt->trans->nrows+npar+1);
+ 
+     pluto_matrix_free(remap);
+     free(remap_divs);
