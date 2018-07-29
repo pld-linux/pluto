@@ -2,7 +2,7 @@ Summary:	PLUTO automatic parallelizer
 Summary(pl.UTF-8):	PLUTO - automatyczny zrównoleglacz
 Name:		pluto
 Version:	0.11.4
-Release:	2
+Release:	3
 License:	LGPL v2.1+ (library), GPL v3+ (tools)
 Group:		Libraries
 Source0:	http://downloads.sourceforge.net/pluto-compiler/%{name}-%{version}.tar.gz
@@ -16,6 +16,7 @@ BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	candl-devel >= 0.6.2-1.20120728
 BuildRequires:	clan-devel >= 0.8.0
+BuildRequires:	cloog-isl-devel >= 0.19.0
 BuildRequires:	gcc >= 6:4.2
 BuildRequires:	isl-devel >= 0.13
 BuildRequires:	libgomp-devel
@@ -25,6 +26,7 @@ BuildRequires:	piplib-devel >= 1.4.0
 BuildRequires:	polylib-devel >= 5.22.5
 Requires:	candl >= 0.6.2-1.20120728
 Requires:	clan >= 0.8.0
+Requires:	cloog-isl-libs >= 0.19.0
 Requires:	isl >= 0.13
 Requires:	osl >= 0.9.0
 Requires:	piplib >= 1.4.0
@@ -49,6 +51,7 @@ Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	candl-devel >= 0.6.2-1.20120728
 Requires:	clan-devel >= 0.8.0
+Requires:	cloog-isl-devel >= 0.19.0
 Requires:	isl-devel >= 0.13
 Requires:	libgomp-devel
 Requires:	osl-devel >= 0.9.0
