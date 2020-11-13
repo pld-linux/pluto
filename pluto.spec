@@ -5,6 +5,7 @@ Version:	0.11.4
 Release:	4
 License:	LGPL v2.1+ (library), GPL v3+ (tools)
 Group:		Libraries
+# monitor also https://github.com/bondhugula/pluto/releases
 Source0:	http://downloads.sourceforge.net/pluto-compiler/%{name}-%{version}.tar.gz
 # Source0-md5:	2ad2e3305ea480b1c2aefd2cc90f38a1
 Patch0:		%{name}-system-libs.patch
