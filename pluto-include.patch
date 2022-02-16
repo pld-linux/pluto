@@ -1,5 +1,6 @@
---- pluto-0.11.0/include/pluto/libpluto.h.orig	2014-05-30 10:28:06.000000000 +0200
-+++ pluto-0.11.0/include/pluto/libpluto.h	2014-10-06 16:13:49.032098067 +0200
+diff -urNp -x '*.orig' pluto-0.11.4.org/include/pluto/libpluto.h pluto-0.11.4/include/pluto/libpluto.h
+--- pluto-0.11.4.org/include/pluto/libpluto.h	2015-10-28 16:24:59.000000000 +0100
++++ pluto-0.11.4/include/pluto/libpluto.h	2022-02-16 09:51:43.867465467 +0100
 @@ -1,7 +1,8 @@
  #ifndef __LIBPLUTO__
  #define __LIBPLUTO__
@@ -9,5 +10,5 @@
 +#include <isl/union_map.h>
 +#include <osl/scop.h>
  
- #if defined(__cplusplus)
- extern "C" {
+ #include "osl/scop.h"
+ 

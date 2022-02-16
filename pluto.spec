@@ -2,7 +2,7 @@ Summary:	PLUTO automatic parallelizer
 Summary(pl.UTF-8):	PLUTO - automatyczny zrównoleglacz
 Name:		pluto
 Version:	0.11.4
-Release:	5
+Release:	6
 License:	LGPL v2.1+ (library), GPL v3+ (tools)
 Group:		Libraries
 # monitor also https://github.com/bondhugula/pluto/releases
@@ -91,7 +91,8 @@ Statyczna biblioteka Pluto.
 %{__automake}
 %configure \
 	--disable-silent-rules
-%{__make}
+%{__make} \
+	OPT_FLAGS="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
